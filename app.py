@@ -105,6 +105,27 @@ dl_eff_var = SR * (AH - SH)
 total_actual = (AQ * AP) + (AH * AR)
 net_variance = total_actual - std_cost
 
+# 5.5 Formula Glossary (Educational Legend)
+with st.expander("📚 Formula Glossary: What do these letters mean?"):
+    glos1, glos2 = st.columns(2)
+    with glos1:
+        st.markdown("""
+        **Direct Materials (DM)**
+        * **AQ (Actual Quantity):** The total physical raw materials used on the floor.
+        * **AP (Actual Price):** The real-world price paid per unit of material.
+        * **SQ (Standard Quantity):** The budgeted material allowance for this production run.
+        * **SP (Standard Price):** The target purchase price per unit of material.
+        """)
+    with glos2:
+        st.markdown("""
+        **Direct Labor (DL)**
+        * **AH (Actual Hours):** The total physical hours your team worked on the floor.
+        * **AR (Actual Rate):** The real-world hourly wage paid to the workers.
+        * **SH (Standard Hours):** The budgeted time allowance for this production run.
+        * **SR (Standard Rate):** The target hourly wage for the workforce.
+        """)
+st.markdown("---")
+
 # 6. Layout: Metrics Row (WITH DYNAMIC LIVE ANALYSIS)
 col1, col2, col3, col4 = st.columns(4)
 
