@@ -4,6 +4,23 @@ import pandas as pd
 
 # 1. App Configuration
 st.set_page_config(page_title="Cost Control Dashboard", layout="wide")
+
+# --- CUSTOM CSS FOR EYE CANDY (TCU THEME) ---
+st.markdown("""
+<style>
+/* Style the metric cards to look like raised 3D dashboard tiles */
+div[data-testid="metric-container"] {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 5% 5% 5% 10%;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.08);
+    border-left: 5px solid #4d1979; /* TCU Purple Accent */
+}
+</style>
+""", unsafe_allow_html=True)
+# --------------------------------------------
+
 st.title("Purple Anodized Aluminum Enclosures: AI Cost Controller")
 
 # 2. Standard Costs (The Baseline)
@@ -20,17 +37,18 @@ AP = st.sidebar.slider("Actual Material Price ($/lb)", 3.00, 8.00, 4.80)
 AH = st.sidebar.slider("Actual Labor Hours", 3000, 8000, 5500)
 AR = st.sidebar.slider("Actual Labor Rate ($/hr)", 15.00, 30.00, 21.00)
 
-# --- NEW QR CODE SECTION ---
+# --- LIVE QR CODE SECTION ---
 st.sidebar.markdown("---")
 st.sidebar.header("📱 Scan to Play Live!")
 
-# REPLACE THIS URL with your actual live Streamlit URL!
-app_url = "https://variance-dashboard-fyajytibd3ibqjrrlxykwf.streamlit.app" 
+# Your actual live Streamlit URL
+app_url = "https://variance-dashboard-fyajytibd3ibqjrrlxykwf.streamlit.app/" 
 
 # This calls a free API to instantly generate the QR code image
 qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={app_url}"
 st.sidebar.image(qr_url, use_container_width=True)
 # ---------------------------
+
 # 4. Gamification: The Alumni Audit Challenge
 st.sidebar.markdown("---")
 st.sidebar.header("Alumni Audit Challenge")
@@ -53,30 +71,34 @@ dl_eff_var = SR * (AH - SH)
 total_actual = (AQ * AP) + (AH * AR)
 net_variance = total_actual - std_cost
 
-# 6. Layout: Metrics Row
+# 6. Layout: Metrics Row (FIXED COLORS AND ARROWS)
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("DM Price Variance", f"${abs(dm_price_var):,.2f}", "Unfavorable" if dm_price_var > 0 else "Favorable", delta_color="inverse")
-col2.metric("DM Qty Variance", f"${abs(dm_qty_var):,.2f}", "Unfavorable" if dm_qty_var > 0 else "Favorable", delta_color="inverse")
-col3.metric("DL Rate Variance", f"${abs(dl_rate_var):,.2f}", "Unfavorable" if dl_rate_var > 0 else "Favorable", delta_color="inverse")
-col4.metric("DL Eff Variance", f"${abs(dl_eff_var):,.2f}", "Unfavorable" if dl_eff_var > 0 else "Favorable", delta_color="inverse")
+# By adding a minus sign to Favorable, Streamlit automatically turns it Green and points the arrow down
+col1.metric("DM Price Var", f"${abs(dm_price_var):,.2f}", f"{'-' if dm_price_var <= 0 else ''}Favorable" if dm_price_var <= 0 else "Unfavorable", delta_color="inverse")
+col2.metric("DM Qty Var", f"${abs(dm_qty_var):,.2f}", f"{'-' if dm_qty_var <= 0 else ''}Favorable" if dm_qty_var <= 0 else "Unfavorable", delta_color="inverse")
+col3.metric("DL Rate Var", f"${abs(dl_rate_var):,.2f}", f"{'-' if dl_rate_var <= 0 else ''}Favorable" if dl_rate_var <= 0 else "Unfavorable", delta_color="inverse")
+col4.metric("DL Eff Var", f"${abs(dl_eff_var):,.2f}", f"{'-' if dl_eff_var <= 0 else ''}Favorable" if dl_eff_var <= 0 else "Unfavorable", delta_color="inverse")
 
-# 7. Visualization: Plotly Waterfall Chart
+# 7. Visualization: Plotly Waterfall Chart (FIXED FLOATING POINT)
+# This loops through the values and formats them perfectly to 1 decimal place
+chart_text = [f"${v/1000:,.1f}k" for v in [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual]]
+
 fig = go.Figure(go.Waterfall(
     name = "Cost Bridge", orientation = "v",
     measure = ["absolute", "relative", "relative", "relative", "relative", "total"],
     x = ["Standard Cost", "DM Price Var", "DM Qty Var", "DL Rate Var", "DL Eff Var", "Actual Cost"],
     textposition = "outside",
-    text = [f"${std_cost/1000}k", f"${dm_price_var/1000}k", f"${dm_qty_var/1000}k", f"${dl_rate_var/1000}k", f"${dl_eff_var/1000}k", f"${total_actual/1000}k"],
+    text = chart_text, # Using the cleanly formatted text
     y = [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual],
     connector = {"line":{"color":"rgb(63, 63, 63)"}},
     decreasing = {"marker":{"color":"#2ca02c"}},  # Green for Favorable
     increasing = {"marker":{"color":"#d62728"}},  # Red for Unfavorable
-    totals = {"marker":{"color":"#1f77b4"}}       # Blue for Totals
+    totals = {"marker":{"color":"#4d1979"}}       # Changed final bar to TCU Purple
 ))
 fig.update_layout(title="Cost Bridge: Standard to Actual", showlegend=False, height=500)
 st.plotly_chart(fig, use_container_width=True)
 
-# 8. Dynamic AI Narrative & What-If Optimizer
+# 8. Dynamic AI Narrative & What-If Optimizer (WITH ANIMATION)
 st.markdown("### 🤖 AI Controller Analysis")
 if net_variance > 0:
     st.error(f"**Warning: Operating at a Net Deficit of ${net_variance:,.2f}.**")
@@ -93,7 +115,10 @@ if net_variance > 0:
     st.info(f"**Recovery Optimizer:** To offset this ${net_variance:,.2f} deficit strictly through labor efficiency, the floor manager must reduce production time by **{hours_to_cut:,.1f} hours** from the current actuals.")
 else:
     st.success(f"**Success: Operating at a Net Surplus of ${abs(net_variance):,.2f}.**")
-    st.write("Production is currently operating under or at standard cost. Maintain current material sourcing and labor scheduling.")
+    st.write("Production is currently operating under or at standard cost. Great job!")
+    
+    # THE EYE CANDY ANIMATION TRIGGER
+    st.balloons() 
     
 # Trigger the Audit Alert if Chaos is on
 if chaos_mode:
