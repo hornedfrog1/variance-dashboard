@@ -38,7 +38,6 @@ div[data-testid="metric-container"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ---> THIS IS THE TITLE YOU WERE MISSING! <---
 st.title("Purple Anodized Aluminum Enclosures: AI Cost Controller")
 
 
@@ -196,7 +195,7 @@ with col4:
 
 
 # ==========================================
-# 7. VISUALIZATION: PLOTLY WATERFALL CHART (PROJECTOR SCALED)
+# 7. VISUALIZATION: PLOTLY WATERFALL CHART
 # ==========================================
 chart_text = [f"${v/1000:,.1f}k" for v in [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual]]
 
@@ -206,7 +205,7 @@ fig = go.Figure(go.Waterfall(
     x = ["Standard Cost", "DM Price Var", "DM Qty Var", "DL Rate Var", "DL Eff Var", "Actual Cost"],
     textposition = "outside",
     text = chart_text,
-    textfont = {"size": 16, "family": "Arial Black"}, # Makes the numbers above the bars massive and bold
+    textfont = {"size": 16, "family": "Arial Black"}, 
     y = [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual],
     connector = {"line":{"color":"rgb(63, 63, 63)", "width": 2}},
     decreasing = {"marker":{"color":"#2ca02c"}},  
@@ -215,11 +214,11 @@ fig = go.Figure(go.Waterfall(
 ))
 
 fig.update_layout(
-    title={"text": "Cost Bridge: Standard to Actual", "font": {"size": 24}}, # Massive title
+    title={"text": "Cost Bridge: Standard to Actual", "font": {"size": 24}}, 
     showlegend=False, 
-    height=550, # Slightly taller to fit the bigger text
-    font=dict(size=14, color="black"), # Makes the X and Y axis labels bigger and darker
-    margin=dict(t=80) # Adds a little padding at the top
+    height=550, 
+    font=dict(size=14, color="black"), 
+    margin=dict(t=80) 
 )
 st.plotly_chart(fig, use_container_width=True)
 
@@ -241,10 +240,9 @@ else:
     st.write("Production is currently operating under or at standard cost. Great job!")
     st.balloons() 
     
-# Trigger the Audit Alert if Chaos is on
 if chaos_mode:
     st.warning("⚠️ **AUDIT ALERT:** The 'Enable Production Chaos' toggle is active. A $15,000 phantom material cost has been secretly injected into the math. The sliders no longer match the waterfall output. Can you find the leak?")
     with st.expander("🔍 Reveal the Leak (Show Solution)"):
-        st.markdown(f"**The Culprit:** Unrecorded Material Scrap / Theft")
+        st.markdown("**The Culprit:** Unrecorded Material Scrap / Theft")
         st.markdown(f"The UI slider shows you only used **{AQ_slider:,.0f} lbs** of material. However, the system silently processed **{AQ:,.0f} lbs** into the final math.")
-st.markdown(f"This hidden **3,000 lb discrepancy** (valued at the standard \\$5.00/lb rate) perfectly explains the mysterious **\\$15,000 Unfavorable Quantity Variance** that doesn't match the inputs. This is why you must always audit the underlying data pipeline, not just the front-end dashboard!")
+        st.markdown("This hidden **3,000 lb discrepancy** (valued at the standard \\$5.00/lb rate) perfectly explains the mysterious **\\$15,000 Unfavorable Quantity Variance** that doesn't match the inputs. This is why you must always audit the underlying data pipeline, not just the front-end dashboard!")
