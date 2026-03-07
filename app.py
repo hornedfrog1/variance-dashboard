@@ -247,4 +247,4 @@ if chaos_mode:
     with st.expander("🔍 Reveal the Leak (Show Solution)"):
         st.markdown(f"**The Culprit:** Unrecorded Material Scrap / Theft")
         st.markdown(f"The UI slider shows you only used **{AQ_slider:,.0f} lbs** of material. However, the system silently processed **{AQ:,.0f} lbs** into the final math.")
-        st.markdown(f"This hidden **3,000 lb discrepancy** (valued at the standard $5.00/lb rate) perfectly explains the mysterious **$15,000 Unfavorable Quantity Variance** that doesn't match the inputs. This is why you must always audit the underlying data pipeline, not just the front-end dashboard!")
+st.markdown(f"This hidden **3,000 lb discrepancy** (valued at the standard \\$5.00/lb rate) perfectly explains the mysterious **\\$15,000 Unfavorable Quantity Variance** that doesn't match the inputs. This is why you must always audit the underlying data pipeline, not just the front-end dashboard!")
