@@ -71,14 +71,44 @@ dl_eff_var = SR * (AH - SH)
 total_actual = (AQ * AP) + (AH * AR)
 net_variance = total_actual - std_cost
 
-# 6. Layout: Metrics Row (FIXED COLORS AND ARROWS)
+# 6. Layout: Metrics Row (WITH CLICKABLE EXPLANATIONS)
 col1, col2, col3, col4 = st.columns(4)
-# By adding a minus sign to Favorable, Streamlit automatically turns it Green and points the arrow down
-col1.metric("DM Price Var", f"${abs(dm_price_var):,.2f}", f"{'-' if dm_price_var <= 0 else ''}Favorable" if dm_price_var <= 0 else "Unfavorable", delta_color="inverse")
-col2.metric("DM Qty Var", f"${abs(dm_qty_var):,.2f}", f"{'-' if dm_qty_var <= 0 else ''}Favorable" if dm_qty_var <= 0 else "Unfavorable", delta_color="inverse")
-col3.metric("DL Rate Var", f"${abs(dl_rate_var):,.2f}", f"{'-' if dl_rate_var <= 0 else ''}Favorable" if dl_rate_var <= 0 else "Unfavorable", delta_color="inverse")
-col4.metric("DL Eff Var", f"${abs(dl_eff_var):,.2f}", f"{'-' if dl_eff_var <= 0 else ''}Favorable" if dl_eff_var <= 0 else "Unfavorable", delta_color="inverse")
 
+with col1:
+    st.metric("DM Price Var", f"${abs(dm_price_var):,.2f}", f"{'-' if dm_price_var <= 0 else ''}Favorable" if dm_price_var <= 0 else "Unfavorable", delta_color="inverse")
+    with st.expander("📘 What is this?"):
+        st.markdown("""
+        **Formula:** `AQ x (AP - SP)`
+        
+        **Meaning:** Did procurement get a good deal? This isolates the financial impact of the raw aluminum's purchase price, ignoring how much we actually used.
+        """)
+
+with col2:
+    st.metric("DM Qty Var", f"${abs(dm_qty_var):,.2f}", f"{'-' if dm_qty_var <= 0 else ''}Favorable" if dm_qty_var <= 0 else "Unfavorable", delta_color="inverse")
+    with st.expander("📘 What is this?"):
+        st.markdown("""
+        **Formula:** `SP x (AQ - SQ)`
+        
+        **Meaning:** Was the floor efficient with materials? This isolates the financial impact of scrap, waste, or over-usage (like dealing with brittle metal).
+        """)
+
+with col3:
+    st.metric("DL Rate Var", f"${abs(dl_rate_var):,.2f}", f"{'-' if dl_rate_var <= 0 else ''}Favorable" if dl_rate_var <= 0 else "Unfavorable", delta_color="inverse")
+    with st.expander("📘 What is this?"):
+        st.markdown("""
+        **Formula:** `AH x (AR - SR)`
+        
+        **Meaning:** Did we pay our workers more than expected? This usually happens when authorizing emergency overtime or bringing in senior-level technicians.
+        """)
+
+with col4:
+    st.metric("DL Eff Var", f"${abs(dl_eff_var):,.2f}", f"{'-' if dl_eff_var <= 0 else ''}Favorable" if dl_eff_var <= 0 else "Unfavorable", delta_color="inverse")
+    with st.expander("📘 What is this?"):
+        st.markdown("""
+        **Formula:** `SR x (AH - SH)`
+        
+        **Meaning:** Did the manufacturing take longer than planned? This highlights inefficiencies like machine jams, slow line speeds, or poor labor performance.
+        """)
 # 7. Visualization: Plotly Waterfall Chart (FIXED FLOATING POINT)
 # This loops through the values and formats them perfectly to 1 decimal place
 chart_text = [f"${v/1000:,.1f}k" for v in [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual]]
