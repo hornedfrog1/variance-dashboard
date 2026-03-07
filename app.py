@@ -71,44 +71,61 @@ dl_eff_var = SR * (AH - SH)
 total_actual = (AQ * AP) + (AH * AR)
 net_variance = total_actual - std_cost
 
-# 6. Layout: Metrics Row (WITH CLICKABLE EXPLANATIONS)
+# 6. Layout: Metrics Row (WITH DYNAMIC LIVE ANALYSIS)
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("DM Price Var", f"${abs(dm_price_var):,.2f}", f"{'-' if dm_price_var <= 0 else ''}Favorable" if dm_price_var <= 0 else "Unfavorable", delta_color="inverse")
     with st.expander("📘 What is this?"):
-        st.markdown("""
-        **Formula:** `AQ x (AP - SP)`
-        
-        **Meaning:** Did procurement get a good deal? This isolates the financial impact of the raw aluminum's purchase price, ignoring how much we actually used.
-        """)
+        st.markdown("**Formula:** `AQ x (AP - SP)`")
+        st.markdown("**Meaning:** The financial impact of the raw aluminum's purchase price.")
+        st.markdown("---")
+        if AP < SP:
+            st.success(f"**Live Analysis:** You paid ${SP - AP:.2f} less per pound than the $5.00 standard. This saved money, creating a Favorable variance.")
+        elif AP > SP:
+            st.error(f"**Live Analysis:** You paid ${AP - SP:.2f} more per pound than the $5.00 standard. This overpayment creates an Unfavorable variance.")
+        else:
+            st.info("**Live Analysis:** You paid exactly the standard $5.00 rate. No variance.")
 
 with col2:
     st.metric("DM Qty Var", f"${abs(dm_qty_var):,.2f}", f"{'-' if dm_qty_var <= 0 else ''}Favorable" if dm_qty_var <= 0 else "Unfavorable", delta_color="inverse")
     with st.expander("📘 What is this?"):
-        st.markdown("""
-        **Formula:** `SP x (AQ - SQ)`
-        
-        **Meaning:** Was the floor efficient with materials? This isolates the financial impact of scrap, waste, or over-usage (like dealing with brittle metal).
-        """)
+        st.markdown("**Formula:** `SP x (AQ - SQ)`")
+        st.markdown("**Meaning:** The financial impact of scrap, waste, or over-usage on the floor.")
+        st.markdown("---")
+        if AQ < SQ:
+            st.success(f"**Live Analysis:** You used {SQ - AQ:,} fewer pounds than the 20,000 lb standard allowance. Excellent material efficiency!")
+        elif AQ > SQ:
+            st.error(f"**Live Analysis:** You used {AQ - SQ:,} more pounds than the 20,000 lb standard allowance. This excess waste drives costs up.")
+        else:
+            st.info("**Live Analysis:** You used exactly the standard 20,000 lbs. No variance.")
 
 with col3:
     st.metric("DL Rate Var", f"${abs(dl_rate_var):,.2f}", f"{'-' if dl_rate_var <= 0 else ''}Favorable" if dl_rate_var <= 0 else "Unfavorable", delta_color="inverse")
     with st.expander("📘 What is this?"):
-        st.markdown("""
-        **Formula:** `AH x (AR - SR)`
-        
-        **Meaning:** Did we pay our workers more than expected? This usually happens when authorizing emergency overtime or bringing in senior-level technicians.
-        """)
+        st.markdown("**Formula:** `AH x (AR - SR)`")
+        st.markdown("**Meaning:** The financial impact of paying workers more or less than expected.")
+        st.markdown("---")
+        if AR < SR:
+            st.success(f"**Live Analysis:** You paid ${SR - AR:.2f} less per hour than the $20.00 standard rate. This creates a Favorable variance.")
+        elif AR > SR:
+            st.error(f"**Live Analysis:** You paid ${AR - SR:.2f} more per hour than the $20.00 standard. Did you authorize emergency overtime?")
+        else:
+            st.info("**Live Analysis:** You paid exactly the standard $20.00 rate. No variance.")
 
 with col4:
     st.metric("DL Eff Var", f"${abs(dl_eff_var):,.2f}", f"{'-' if dl_eff_var <= 0 else ''}Favorable" if dl_eff_var <= 0 else "Unfavorable", delta_color="inverse")
     with st.expander("📘 What is this?"):
-        st.markdown("""
-        **Formula:** `SR x (AH - SH)`
-        
-        **Meaning:** Did the manufacturing take longer than planned? This highlights inefficiencies like machine jams, slow line speeds, or poor labor performance.
-        """)
+        st.markdown("**Formula:** `SR x (AH - SH)`")
+        st.markdown("**Meaning:** The financial impact of manufacturing taking longer than planned.")
+        st.markdown("---")
+        if AH < SH:
+            st.success(f"**Live Analysis:** You finished production using {SH - AH:,} fewer hours than the 5,000 hour standard. Highly efficient labor!")
+        elif AH > SH:
+            st.error(f"**Live Analysis:** Production took {AH - SH:,} hours longer than the 5,000 hour standard. Machine jams or slow line speeds are costing you money.")
+        else:
+            st.info("**Live Analysis:** Production took exactly the standard 5,000 hours. No variance.")
+
 # 7. Visualization: Plotly Waterfall Chart (FIXED FLOATING POINT)
 # This loops through the values and formats them perfectly to 1 decimal place
 chart_text = [f"${v/1000:,.1f}k" for v in [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual]]
