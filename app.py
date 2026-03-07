@@ -5,10 +5,10 @@ import pandas as pd
 # 1. App Configuration
 st.set_page_config(page_title="Cost Control Dashboard", layout="wide")
 
-# --- CUSTOM CSS FOR EYE CANDY (TCU THEME) ---
+# --- CUSTOM CSS FOR EYE CANDY (TCU THEME & FONT FIXES) ---
 st.markdown("""
 <style>
-/* Style the metric cards to look like raised 3D dashboard tiles */
+/* 1. Style the metric cards to look like raised 3D dashboard tiles */
 div[data-testid="metric-container"] {
     background-color: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -17,18 +17,40 @@ div[data-testid="metric-container"] {
     box-shadow: 3px 3px 10px rgba(0,0,0,0.08);
     border-left: 5px solid #4d1979; /* TCU Purple Accent */
 }
+
+/* 2. Make the Metric Labels bigger and bolder for the projector */
+[data-testid="stMetricLabel"] {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #333333;
+}
+
+/* 3. Make the main dollar amounts a bit bolder */
+[data-testid="stMetricValue"] {
+    font-weight: 800 !important;
+}
+
+/* 4. Hide the clunky minus sign in the Favorable text but keep the green arrow */
+[data-testid="stMetricDelta"] svg + div::first-letter {
+    font-size: 0;
+}
 </style>
 """, unsafe_allow_html=True)
 # --------------------------------------------
 
-st.title("Purple Anodized Aluminum Enclosures: AI Cost Controller")
+# 2. Standard Costs (The Baseline - Now Editable!)
+st.sidebar.header("🎯 Set Standard Costs")
 
-# 2. Standard Costs (The Baseline)
-SQ = 20000
-SP = 5.00
-SH = 5000
-SR = 20.00
+# We put this in an expander so it doesn't clutter the UI during your presentation
+with st.sidebar.expander("⚙️ Edit Baseline Standards", expanded=False):
+    SQ = st.number_input("Standard Material Qty (lbs)", value=20000, step=1000)
+    SP = st.number_input("Standard Material Price ($/lb)", value=5.00, format="%.2f", step=0.10)
+    SH = st.number_input("Standard Labor Hours", value=5000, step=500)
+    SR = st.number_input("Standard Labor Rate ($/hr)", value=20.00, format="%.2f", step=0.50)
+
 std_cost = (SQ * SP) + (SH * SR)
+st.sidebar.markdown("---")
+
 
 # 3. Sidebar Inputs (The Levers)
 st.sidebar.header("Actual Results (February)")
