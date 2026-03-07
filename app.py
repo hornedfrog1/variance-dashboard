@@ -52,24 +52,36 @@ std_cost = (SQ * SP) + (SH * SR)
 st.sidebar.markdown("---")
 
 
-# 3. Sidebar Inputs (The Levers)
-st.sidebar.header("Actual Results (February)")
-AQ_slider = st.sidebar.slider("Actual Materials Used (lbs)", 15000, 30000, 22000)
-AP = st.sidebar.slider("Actual Material Price ($/lb)", 3.00, 8.00, 4.80)
-AH = st.sidebar.slider("Actual Labor Hours", 3000, 8000, 5500)
-AR = st.sidebar.slider("Actual Labor Rate ($/hr)", 15.00, 30.00, 21.00)
+# 3. Sidebar Inputs (The Levers - Upgraded UI)
+st.sidebar.header("🎛️ Actual Results")
 
-# --- LIVE QR CODE SECTION ---
-st.sidebar.markdown("---")
-st.sidebar.header("📱 Scan to Play Live!")
+# Custom function to inject a live, color-coded delta tracker under the sliders
+def get_delta_html(actual, standard, is_currency=False):
+    delta = actual - standard
+    if delta == 0:
+        return "<div style='text-align: right; color: gray; font-size: 0.85em; margin-top: -15px; margin-bottom: 15px;'>🎯 On Target</div>"
+    
+    color = "#d62728" if delta > 0 else "#2ca02c" # Red if Unfavorable, Green if Favorable
+    sign = "+" if delta > 0 else ""
+    formatted_delta = f"${delta:,.2f}" if is_currency else f"{delta:,.0f}"
+    
+    return f"<div style='text-align: right; color: {color}; font-weight: bold; font-size: 0.85em; margin-top: -15px; margin-bottom: 15px;'>{sign}{formatted_delta} vs Standard</div>"
 
-# Your actual live Streamlit URL
-app_url = "https://variance-dashboard-fyajytibd3ibqjrrlxykwf.streamlit.app/" 
+st.sidebar.markdown("#### 📦 Materials")
+# The 'help' parameter adds the ? hover tooltip with the baseline
+AQ_slider = st.sidebar.slider("Actual Materials Used (lbs)", 15000, 30000, 22000, help=f"Standard Target: {SQ:,.0f} lbs")
+st.sidebar.markdown(get_delta_html(AQ_slider, SQ), unsafe_allow_html=True)
 
-# This calls a free API to instantly generate the QR code image
-qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={app_url}"
-st.sidebar.image(qr_url, use_container_width=True)
-# ---------------------------
+AP = st.sidebar.slider("Actual Material Price ($/lb)", 3.00, 8.00, 4.80, help=f"Standard Target: ${SP:,.2f}")
+st.sidebar.markdown(get_delta_html(AP, SP, True), unsafe_allow_html=True)
+
+st.sidebar.markdown("#### 👷 Labor")
+AH = st.sidebar.slider("Actual Labor Hours", 3000, 8000, 5500, help=f"Standard Target: {SH:,.0f} hours")
+st.sidebar.markdown(get_delta_html(AH, SH), unsafe_allow_html=True)
+
+AR = st.sidebar.slider("Actual Labor Rate ($/hr)", 15.00, 30.00, 21.00, help=f"Standard Target: ${SR:,.2f}")
+st.sidebar.markdown(get_delta_html(AR, SR, True), unsafe_allow_html=True)
+
 
 # 4. Gamification: The Alumni Audit Challenge
 st.sidebar.markdown("---")
