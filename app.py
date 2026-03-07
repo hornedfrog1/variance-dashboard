@@ -20,6 +20,17 @@ AP = st.sidebar.slider("Actual Material Price ($/lb)", 3.00, 8.00, 4.80)
 AH = st.sidebar.slider("Actual Labor Hours", 3000, 8000, 5500)
 AR = st.sidebar.slider("Actual Labor Rate ($/hr)", 15.00, 30.00, 21.00)
 
+# --- NEW QR CODE SECTION ---
+st.sidebar.markdown("---")
+st.sidebar.header("📱 Scan to Play Live!")
+
+# REPLACE THIS URL with your actual live Streamlit URL!
+app_url = "https://variance-dashboard-fyajytibd3ibqjrrlxykwf.streamlit.app" 
+
+# This calls a free API to instantly generate the QR code image
+qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={app_url}"
+st.sidebar.image(qr_url, use_container_width=True)
+# ---------------------------
 # 4. Gamification: The Alumni Audit Challenge
 st.sidebar.markdown("---")
 st.sidebar.header("Alumni Audit Challenge")
