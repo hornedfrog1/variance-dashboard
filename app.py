@@ -417,13 +417,13 @@ elif page == "How you can make this or something similar!":
     st.code(customize_prompt, language="text")
     copy_button(customize_prompt, "Copy Prompt 3: Customize", "prompt3")
 
-st.markdown("### Three simple steps")
-s1, s2, s3 = st.columns(3)
-
-s1.success("1. Copy a prompt\n\nStart with the app prompt, deployment prompt, or customization prompt.")
-s2.success("2. Paste into ChatGPT\n\nAsk ChatGPT to generate the code or instructions for you.")
-s3.success("3. Run and share\n\nTest locally, deploy it online, and share the link with others.")
-
+    st.markdown("### Three simple steps")
+    s1, s2, s3 = st.columns(3)
+    
+    s1.success("1. Copy a prompt\n\nStart with the app prompt, deployment prompt, or customization prompt.")
+    s2.success("2. Paste into ChatGPT\n\nAsk ChatGPT to generate the code or instructions for you.")
+    s3.success("3. Run and share\n\nTest locally, deploy it online, and share the link with others.")
+    
     st.markdown("### What these tools are doing")
     g1, g2, g3 = st.columns(3)
     g1.info("**Streamlit** turns Python into a simple interactive web app.")
