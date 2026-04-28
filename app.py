@@ -417,15 +417,21 @@ elif page == "How you can make this or something similar!":
     st.code(customize_prompt, language="text")
     copy_button(customize_prompt, "Copy Prompt 3: Customize", "prompt3")
 
-    st.markdown("### Three simple steps")
-    s1, s2, s3 = st.columns(3)
-    s1.success("**1. Copy a prompt**
+st.markdown("### Three simple steps")
+s1, s2, s3 = st.columns(3)
 
-Start with the app prompt, deployment prompt, or customization prompt.")
-    s2.success("**2. Paste into ChatGPT**
-
-Ask ChatGPT to generate the code or instructions for you.")
-    s3.success("**3. Run and share**
+s1.success(
+    "**1. Copy a prompt**\n\n"
+    "Start with the app prompt, deployment prompt, or customization prompt."
+)
+s2.success(
+    "**2. Paste into ChatGPT**\n\n"
+    "Ask ChatGPT to generate the code or instructions for you."
+)
+s3.success(
+    "**3. Run and share**\n\n"
+    "Test locally, deploy it online, and share the link with others."
+)
 
 Test locally, deploy it online, and share the link with others.")
 
