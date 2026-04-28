@@ -457,17 +457,15 @@ elif page == "How you can make this or something similar!":
         )
 
     st.markdown("### Quick start resources")
-    st.code(
-        "pip install streamlit plotly
-python3 -m streamlit run variance_dashboard_app.py",
-        language="bash",
-    )
-    st.code(
-        "streamlit
-plotly",
-        language="text",
-    )
-    st.caption("Save the second code block as requirements.txt before deploying.")
+st.code(
+    "pip install streamlit plotly\npython3 -m streamlit run app.py",
+    language="bash",
+)
+st.code(
+    "streamlit\nplotly",
+    language="text",
+)
+st.caption("Save the second code block as requirements.txt before deploying.")
 
     st.markdown("### Event tip: share with a QR code")
     st.write(
