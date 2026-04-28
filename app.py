@@ -344,33 +344,96 @@ def render_dashboard():
             else:
                 st.info(f"**Live Analysis:** Production took exactly the standard {SH:,.0f} hours. No variance.")
 
-    chart_text = [f"${v/1000:,.1f}k" for v in [std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual]]
+        # ==========================================
+    # VISUALIZATION 1: STANDARD VS ACTUAL TOTAL COST
+    # ==========================================
+    st.markdown("### Total Cost Comparison")
 
-    fig = go.Figure(
-        go.Waterfall(
-            name="Cost Bridge",
-            orientation="v",
-            measure=["absolute", "relative", "relative", "relative", "relative", "total"],
-            x=["Standard Cost", "DM Price Var", "DM Qty Var", "DL Rate Var", "DL Eff Var", "Actual Cost"],
+    total_color = "#d62728" if total_actual > std_cost else "#2ca02c"
+
+    total_fig = go.Figure(
+        go.Bar(
+            x=["Standard Cost", "Actual Cost"],
+            y=[std_cost, total_actual],
+            text=[f"${std_cost:,.0f}", f"${total_actual:,.0f}"],
             textposition="outside",
-            text=chart_text,
-            textfont={"size": 16, "family": "Arial Black"},
-            y=[std_cost, dm_price_var, dm_qty_var, dl_rate_var, dl_eff_var, total_actual],
-            connector={"line": {"color": "rgb(63, 63, 63)", "width": 2}},
-            decreasing={"marker": {"color": "#2ca02c"}},
-            increasing={"marker": {"color": "#d62728"}},
-            totals={"marker": {"color": "#4d1979"}},
+            marker_color=["#4d1979", total_color],
         )
     )
 
-    fig.update_layout(
-        title={"text": "Cost Bridge: Standard to Actual", "font": {"size": 24}},
+    total_fig.update_layout(
+        title={
+            "text": "Standard Cost vs Actual Cost",
+            "font": {"size": 24},
+        },
+        yaxis_title="Total Cost ($)",
         showlegend=False,
-        height=550,
+        height=425,
         font=dict(size=14, color="black"),
         margin=dict(t=80),
     )
-    st.plotly_chart(fig, use_container_width=True)
+
+    st.plotly_chart(total_fig, use_container_width=True)
+
+    # ==========================================
+    # VISUALIZATION 2: VARIANCE-ONLY CHART
+    # ==========================================
+    st.markdown("### Variance Breakdown")
+
+    variance_names = [
+        "DM Price Var",
+        "DM Qty Var",
+        "DL Rate Var",
+        "DL Eff Var",
+    ]
+
+    variance_values = [
+        dm_price_var,
+        dm_qty_var,
+        dl_rate_var,
+        dl_eff_var,
+    ]
+
+    variance_colors = [
+        "#2ca02c" if value < 0 else "#d62728" if value > 0 else "#808080"
+        for value in variance_values
+    ]
+
+    variance_text = [
+        f"${abs(value):,.0f} {'F' if value < 0 else 'U' if value > 0 else ''}"
+        for value in variance_values
+    ]
+
+    variance_fig = go.Figure(
+        go.Bar(
+            x=variance_names,
+            y=variance_values,
+            text=variance_text,
+            textposition="outside",
+            marker_color=variance_colors,
+        )
+    )
+
+    variance_fig.add_hline(
+        y=0,
+        line_width=2,
+        line_dash="dash",
+        line_color="black",
+    )
+
+    variance_fig.update_layout(
+        title={
+            "text": "Direct Materials and Direct Labor Variances",
+            "font": {"size": 24},
+        },
+        yaxis_title="Variance Amount ($)",
+        showlegend=False,
+        height=500,
+        font=dict(size=14, color="black"),
+        margin=dict(t=80),
+    )
+
+    st.plotly_chart(variance_fig, use_container_width=True)
 
     st.markdown("### 🤖 AI Controller Analysis")
     if net_variance > 0:
