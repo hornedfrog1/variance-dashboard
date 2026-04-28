@@ -444,32 +444,32 @@ elif page == "How you can make this or something similar!":
 
     st.markdown("### Presenter notes")
     with st.expander("Open presenter notes"):
-        st.markdown(
-            """
-            **Suggested talk track for the live demo**
+    st.markdown(
+        """
+        **Suggested talk track for the live demo**
 
-            - This dashboard shows how actual results compare against standard manufacturing costs.
-            - The sliders let us change materials and labor actuals in real time.
-            - The waterfall chart tells the cost story visually, starting at standard cost and stepping through each variance.
-            - The second page shows that this kind of app is not magic: attendees can build something similar themselves with well-structured prompts.
-            - The goal is not only to show the analysis, but to show how quickly a useful business tool can be created and shared.
-            """
-        )
+        - This dashboard shows how actual results compare against standard manufacturing costs.
+        - The sliders let us change materials and labor actuals in real time.
+        - The waterfall chart tells the cost story visually, starting at standard cost and stepping through each variance.
+        - The second page shows that this kind of app is not magic: attendees can build something similar themselves with well-structured prompts.
+        - The goal is not only to show the analysis, but to show how quickly a useful business tool can be created and shared.
+        """
+    )
 
     st.markdown("### Quick start resources")
-st.code(
+    st.code(
     "pip install streamlit plotly\npython3 -m streamlit run app.py",
     language="bash",
-)
-st.code(
+    )
+    st.code(
     "streamlit\nplotly",
     language="text",
-)
-st.caption("Save the second code block as requirements.txt before deploying.")
+    )
+    st.caption("Save the second code block as requirements.txt before deploying.")
 
     st.markdown("### Event tip: share with a QR code")
     st.write(
-        "Once the app is deployed, generate a QR code for the public link and place it on your final presentation slide so attendees can open it instantly on their phones."
+    "Once the app is deployed, generate a QR code for the public link and place it on your final presentation slide so attendees can open it instantly on their phones."
     )
 
     with st.expander("Even more ideas to improve the experience"):
